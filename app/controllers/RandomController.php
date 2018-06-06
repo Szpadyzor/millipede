@@ -8,6 +8,7 @@
 
 namespace Millipede\Controllers;
 
+use Millipede\Api\Services\MillipedeInterface;
 use Millipede\Forms\RandomForm;
 use Phalcon\Mvc\Controller;
 
@@ -34,15 +35,24 @@ class RandomController extends Controller
         $form = new RandomForm();
 
         $this->view->form = $form;
-
-
     }
 
+    /**
+     *
+     */
     public function chosenAction()
     {
-        var_dump($_REQUEST);die;
+        /** @var MillipedeInterface $millipede */
+        $millipedeService = $this->di->get('millipedeService');
+
+        $millipede = $millipedeService->getMillipede($this->request->get());
+
+        $this->view->millipede = $millipede;
     }
 
+    /**
+     * @return array
+     */
     private function createElementsAmount()
     {
         for ($i = 1; $i <= $this->request->getPost('amount'); $i++)
@@ -52,5 +62,4 @@ class RandomController extends Controller
 
         return $devs;
     }
-
 }

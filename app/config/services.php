@@ -124,6 +124,13 @@ $di->set(
     }
 );
 
+$di->set(
+    'millipedeService',
+    function () {
+        return new \Millipede\Services\Millipede();
+    }
+);
+
 /**
  * Loading routes from the routes.php file
  */

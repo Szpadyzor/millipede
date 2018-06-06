@@ -8,80 +8,31 @@
 
 namespace Millipede\Services;
 
-use Millipede\Api\MillipedeInterface;
+use Millipede\Api\Model\MillipedeInterface as MillipedeModel;
+use Millipede\Api\Services\MillipedeInterface as MillipedeService;
 
 /**
  * Class Millipede
  */
-class Millipede implements MillipedeInterface
+class Millipede implements MillipedeService
 {
-    public function __construct()
+    /**
+     * @param array $data
+     * @param string $returnType
+     *
+     * @return string
+     */
+    public function getMillipede(array $data, $returnType = MillipedeService::RETURN_TYPE_JSON): string
     {
-    }
+        $availableDevelopers = $this->resolveDevelopers($data);
 
-    public function getMillipede(array $data): string
-    {
-        $availableDevelopers = [
-            1 => [
-                'name'     => 'MPakuła',
-                'project'  => 'OLS',
-                'function' => 'D'
-            ],
-            2 => [
-                'name'     => 'BHerba',
-                'project'  => 'CTI',
-                'function' => 'L'
-            ],
-            3 => [
-                'name'     => 'BPicho',
-                'project'  => 'OLS',
-                'function' => 'L'
-            ],
-            4 => [
-                'name'     => 'ABadowski',
-                'project'  => 'IS',
-                'function' => 'L'
-            ],
-            5 => [
-                'name'     => 'MBukowski',
-                'project'  => 'IS',
-                'function' => 'D'
-            ],
-            6 => [
-                'name'     => 'MMularczyk',
-                'project'  => 'LUX',
-                'function' => 'D'
-            ],
-            7 => [
-                'name'     => 'WKaczorowski',
-                'project'  => 'LUX',
-                'function' => 'L'
-            ],
-            8 => [
-                'name'     => 'PMalerowicz',
-                'project'  => 'OLS',
-                'function' => 'D'
-            ],
-            9 => [
-                'name'     => 'MTrybuła',
-                'project'  => 'OLS',
-                'function' => 'D'
-            ],
-            10 => [
-                'name' => 'OWolanin',
-                'project' => 'IS',
-                'function' => 'D'
-            ],
-
-        ];
-
-        $stonoga = [];
+        $millipede = [];
         $amount = count($availableDevelopers);
 
         for ($i = 0; $i < $amount; $i++) {
-            if (empty($stonoga)) {
-                $numberPicked  = array_rand($availableDevelopers, 1);
-                $stonoga[] = $availableDevelopers[$numberPicked];
+            if (empty($millipede)) {
+                $numberPicked = array_rand($availableDevelopers, 1);
+                $millipede[] = $availableDevelopers[$numberPicked];
                 unset($availableDevelopers[$numberPicked]);
 
                 continue;
@@ -90,21 +41,65 @@ class Millipede implements MillipedeInterface
             $numberPicked = array_rand($availableDevelopers, 1);
             $chosen = $availableDevelopers[$numberPicked];
             $previousPicked = $i - 1;
-            $previousDeveloper = $stonoga[$previousPicked];
+            $previousDeveloper = $millipede[$previousPicked];
 
-            if ($chosen['project'] === $previousDeveloper['project']) {
-                if ($previousDeveloper['function'] === 'L' || $chosen['function'] === 'L') {
+            if ($chosen[MillipedeModel::PROJECT] === $previousDeveloper[MillipedeModel::PROJECT]) {
+                if ($previousDeveloper[MillipedeModel::FUNCTION] === MillipedeModel::FUNCTION_LEADER ||
+                    $chosen[MillipedeModel::FUNCTION] === MillipedeModel::FUNCTION_LEADER) {
                     $i--;
 
                     continue;
                 }
             }
 
-            $stonoga[] = $chosen;
+            $millipede[] = $chosen;
 
             unset($availableDevelopers[$numberPicked]);
         }
 
-        $implodedStonoga = implode(' <= ', $stonoga);
+        if ($returnType === MillipedeService::RETURN_TYPE_JSON) {
+            return json_encode($millipede);
+        } elseif (MillipedeService::RETURN_TYPE_STRINGIFIED_EMAILS === $returnType) {
+            return implode(' <= ', array_column($millipede, 'email'));
+        }
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function resolveDevelopers(array $data): array
+    {
+        $developersAmount = $this->countDevelopers($data);
+
+        $developers = [];
+
+        for ($i = 1; $i <= $developersAmount; $i++) {
+            $developers[$i] = [
+                MillipedeModel::EMAIL => $data[MillipedeService::MILLIPEDE_EMAIL_PATTERN . $i],
+                MillipedeModel::PROJECT => $data[MillipedeService::MILLIPEDE_PROJECT_PATTERN . $i],
+                MillipedeModel::FUNCTION => $data[MillipedeService::MILLIPEDE_FUNCTION_PATTERN . $i],
+
+            ];
+        }
+
+        return $developers;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return int
+     */
+    protected function countDevelopers(array $data): int
+    {
+        $amount = 0;
+
+        foreach ($data as $key => $value) {
+            strpos($key, MillipedeModel::EMAIL . '_') !== false ? $amount++ : null;
+        }
+
+        return $amount;
     }
 }
