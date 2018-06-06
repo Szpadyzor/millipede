@@ -9,6 +9,8 @@ WORKDIR /var/www/millipede
 
 COPY composer.json ./
 
+CMD chmod -R 775 cache
+
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN /usr/local/bin/composer install

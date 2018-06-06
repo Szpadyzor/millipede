@@ -8,19 +8,19 @@ networks:
         - subnet: 172.19.0.0/16
 
 services:
-  db:
-    build:
-      context: ../
-      dockerfile: docker/mysql/Dockerfile
-    container_name: phalcon-mysql
-    networks:
-          phalcon_net:
-            ipv4_address: 172.19.0.2
-    environment:
-      MYSQL_ROOT_PASSWORD: phalcon123
-      MYSQL_DATABASE: phalcon
-      MYSQL_USER: phalcon
-      MYSQL_PASSWORD: phalcon
+#  db:
+#    build:
+#      context: ../
+#      dockerfile: docker/mysql/Dockerfile
+#    container_name: phalcon-mysql
+#    networks:
+#          phalcon_net:
+#            ipv4_address: 172.19.0.2
+#    environment:
+#      MYSQL_ROOT_PASSWORD: phalcon123
+#      MYSQL_DATABASE: phalcon
+#      MYSQL_USER: phalcon
+#      MYSQL_PASSWORD: phalcon
 
   php-fpm:
     build:
@@ -32,10 +32,10 @@ services:
         ipv4_address: 172.19.0.3
     working_dir: /var/www/millipede
     volumes:
-      - ../src:/var/www/millipede
+      - ../:/var/www/millipede
       - /www/millipede/docker/
-    links:
-      - db
+#    links:
+#      - db
 
   web:
     build:
@@ -49,6 +49,8 @@ services:
       - "8080:80"
     volumes:
       - ./nginx/conf/millipede.conf:/etc/nginx/conf.d/millipede.conf
+      - ../:/var/www/millipede
+      - /www/millipede/docker/
     links:
       - php-fpm
 
