@@ -9,7 +9,8 @@
 
 use Phalcon\DI\FactoryDefault;
 use Phalcon\Mvc\Application;
-error_reporting(E_ALL);
+error_reporting(E_ALL|E_STRICT);
+ini_set('display_errors', 1);
 
 // Define some absolute path constants to aid in locating resources
 define('BASE_PATH', dirname(__DIR__));

@@ -32,10 +32,13 @@ services:
         ipv4_address: 172.19.0.3
     working_dir: /var/www/millipede
     volumes:
+      - ./php-fpm/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf
+      - ./php-fpm/ssmtp/php-mail.conf:/usr/local/etc/php/conf.d/mail.ini
       - ../:/var/www/millipede
       - /www/millipede/docker/
 #    links:
 #      - db
+
 
   web:
     build:

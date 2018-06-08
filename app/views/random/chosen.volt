@@ -1,22 +1,19 @@
 {{ content() }}
 
 <div class="row">
-        <div class="well">
+        <div class="well text-center">
             <h3>Millipede</h3>
-            <p id="millipede"></p>
-            <script type="text/javascript">
-
-                var millipede = JSON.stringify({{millipede}}),
-                    myObj = JSON.parse(millipede),
-                    txt = "";
-
-                txt += "<table border='1' style='text-align: center'>"
-                for (x in myObj) {
-                    txt += "<tr><td> >>>>> " + myObj[x].email  + '   >>>>>' + "</td></tr>";
-                }
-                txt += "</table>"
-                document.getElementById("millipede").innerHTML = txt;
-            </script>
+            <h5>Here is Millipede for next 2 weeks</h5>
+            <p id="millipede">{{ emailMessage }}</p>
+            <div class="" id="email-confirmation">
+                <h4>
+                    {% if emailsSent %}
+                        <p>Emails was sent to {{ emailsSent }}.</p>
+                    {% elseif emailsNotSent %}
+                        <p>Emails wasn't sent to {{ emailsNotSent }}.</p>
+                        <h6>Contact with administrator.</h6>
+                    {% endif %}
+                </h4>
+            </div>
         </div>
-</div>
 </div>

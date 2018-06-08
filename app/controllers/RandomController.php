@@ -8,8 +8,10 @@
 
 namespace Millipede\Controllers;
 
-use Millipede\Api\Services\MillipedeInterface;
+use Millipede\Api\Services\EmailInterface;
 use Millipede\Forms\RandomForm;
+use Millipede\Services\Email;
+use Millipede\Services\Millipede as MillipedeService;
 use Phalcon\Mvc\Controller;
 
 /**
@@ -42,12 +44,22 @@ class RandomController extends Controller
      */
     public function chosenAction()
     {
-        /** @var MillipedeInterface $millipede */
+        /** @var MillipedeService $millipedeService */
         $millipedeService = $this->di->get('millipedeService');
 
-        $millipede = $millipedeService->getMillipede($this->request->get());
+        /** @var MillipedeService $millipede */
+        $millipede = $millipedeService->createMillipede($this->request->get());
+        $emails = $millipede->getEmails();
 
-        $this->view->millipede = $millipede;
+        /** @var Email $emailService */
+        $emailService = $this->di->get('emailService');
+        $emailMessage = $emailService->prepareMessage($emails);
+        $emailStatus = $emailService->sendEmails($emails, $emailMessage);
+
+        $this->view->emailMessage = $emailMessage;
+        $this->view->emailsSent = implode(', ', $emailStatus[EmailInterface::EMAIL_STATUS_SENT]);
+        $this->view->emailsNotSent = implode(', ', $emailStatus[EmailInterface::EMAIL_STATUS_NOT_SENT]);
+        $this->view->emailStatus = $emailStatus;
     }
 
     /**

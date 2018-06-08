@@ -9,6 +9,7 @@
 namespace Millipede\Api\Services;
 
 use Millipede\Api\Model\MillipedeInterface as MillipedeModelInterface;
+use Millipede\Services\Millipede;
 
 /**
  * Interface MillipedeInterface
@@ -40,7 +41,7 @@ interface MillipedeInterface
      *
      * @return string
      */
-    public function getMillipede(array $data): string;
+    public function createMillipede(array $data): Millipede;
 
     /**
      * @param array $data
@@ -48,4 +49,16 @@ interface MillipedeInterface
      * @return array
      */
     public function resolveDevelopers(array $data): array;
+
+    /**
+     * @return array
+     */
+    public function getMillipede(): array;
+
+    /**
+     * Get emails from millipede
+     *
+     * @return array
+     */
+    public function getEmails(): array;
 }

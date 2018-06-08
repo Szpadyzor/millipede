@@ -131,6 +131,13 @@ $di->set(
     }
 );
 
+$di->set(
+    'emailService',
+    function () {
+        return new \Millipede\Services\Email();
+    }
+);
+
 /**
  * Loading routes from the routes.php file
  */

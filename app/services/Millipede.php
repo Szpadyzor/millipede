@@ -17,12 +17,17 @@ use Millipede\Api\Services\MillipedeInterface as MillipedeService;
 class Millipede implements MillipedeService
 {
     /**
+     * @var array $millipede
+     */
+    protected $millipede = [];
+
+    /**
      * @param array $data
      * @param string $returnType
      *
      * @return string
      */
-    public function getMillipede(array $data, $returnType = MillipedeService::RETURN_TYPE_JSON): string
+    public function createMillipede(array $data, $returnType = MillipedeService::RETURN_TYPE_JSON): Millipede
     {
         $availableDevelopers = $this->resolveDevelopers($data);
 
@@ -57,10 +62,16 @@ class Millipede implements MillipedeService
             unset($availableDevelopers[$numberPicked]);
         }
 
-        if ($returnType === MillipedeService::RETURN_TYPE_JSON) {
+        $this->setMillipede($millipede);
+
+        return $this;
+
+        if (MillipedeService::RETURN_TYPE_JSON === $returnType) {
             return json_encode($millipede);
-        } elseif (MillipedeService::RETURN_TYPE_STRINGIFIED_EMAILS === $returnType) {
-            return implode(' <= ', array_column($millipede, 'email'));
+        }
+
+        if (MillipedeService::RETURN_TYPE_STRINGIFIED_EMAILS === $returnType) {
+            return implode(',', array_column($millipede, 'email'));
         }
     }
 
@@ -101,5 +112,35 @@ class Millipede implements MillipedeService
         }
 
         return $amount;
+    }
+
+    /**
+     * @param array $millipede
+     */
+    protected function setMillipede(array $millipede)
+    {
+        $this->millipede = $millipede;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEmails(): array
+    {
+        $emails = [];
+
+        foreach ($this->millipede as $developer) {
+            $emails[] = $developer[\Millipede\Models\Millipede::EMAIL];
+        }
+
+        return $emails;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMillipede(): array
+    {
+        return $this->millipede;
     }
 }
