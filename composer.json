@@ -1,4 +1,8 @@
 {
+  "name": "trysoft/millipede",
+  "description": "Small project based on docker + phalcon for randomly choose developers for code review",
+  "version": "1.0.0",
+  "license": "MIT",
   "require": {
     "phalcon-ext/mailer": "~2.0"
   },
