@@ -5,6 +5,3 @@ RUN apt-get update \
 		ssmtp \
 	&& apt-get clean \
     && rm -r /var/lib/apt/lists/*
-
-ENV SSMTP_AUTH_USER=maciej.trybula
-ENV SSMTP_AUTH_PASS=yrxudqxmnlvjznyn
