@@ -1,0 +1,36 @@
+{{ include('header.html.twig') }}
+
+{% if millipede is defined and millipede|length > 0 %}
+<div class="current-millipede">
+    <h3>Current Millipede</h3>
+    <table>
+        {% for developer in millipede %}
+        <tr>
+            <td>
+                >>>>> {{ developer.email }} >>>>>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h5>
+        <p>Next sequence will be generated in {{ next }}</p>
+    </h5>
+</div>
+
+{% endif %}
+<div class="row">
+    <div>
+        <div class="well">
+            <h3>Amount of Developers</h3>
+            <p>Please enter a number of developers for Millipede</p>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            {{ form_end(form) }}
+            </form>
+        </div>
+    </div>
+</div>
+{#{% endif %}#}
+
+{{ include('footer.html.twig') }}
+</div>

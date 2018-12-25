@@ -1,0 +1,33 @@
+<div class="current-developers">
+    <h3>Current Developers</h3>
+    {% if developers|length <= 0 %}
+        <div class="no-developers">No developers yet in database</div>
+    {% else %}
+    <div class="current-developers">
+        <form name="developers" action="{{ path('random') }}" method="post" enctype="multipart/form-data">
+            <table class="developers">
+                <tr>
+                    <th>Id</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Project</th>
+                    <th>Function</th>
+                    <th>Email</th>
+                </tr>
+                {% for developer in developers %}
+                    <tr>
+                        <th>{{ developer.id }}</th>
+                        <th>{{ developer.firstname }}</th>
+                        <th>{{ developer.lastname }}</th>
+                        <th>{{ developer.project }}</th>
+                        <th>{{ developer.function }}</th>
+                        <th>{{ developer.email }}</th>
+                        <th><input type="checkbox" name="developer_{{ developer.id }}" value="0"></th>
+                    </tr>
+                {% endfor %}
+            </table>
+            <button type="submit">Losuj</button>
+        </form>
+    </div>
+    {% endif %}
+</div>

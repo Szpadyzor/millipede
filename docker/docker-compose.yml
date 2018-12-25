@@ -1,6 +1,6 @@
 version: '3.1'
 networks:
-  phalcon_net:
+  millipede_net:
     driver: bridge
     ipam:
       driver: default
@@ -8,67 +8,96 @@ networks:
         - subnet: 172.19.0.0/16
 
 services:
-#  db:
-#    build:
-#      context: ../
-#      dockerfile: docker/mysql/Dockerfile
-#    container_name: phalcon-mysql
-#    networks:
-#          phalcon_net:
-#            ipv4_address: 172.19.0.2
-#    environment:
-#      MYSQL_ROOT_PASSWORD: phalcon123
-#      MYSQL_DATABASE: phalcon
-#      MYSQL_USER: phalcon
-#      MYSQL_PASSWORD: phalcon
+  db:
+    build:
+      context: ../
+      dockerfile: docker/mysql/Dockerfile
+    container_name: millipede-mysql
+    networks:
+          millipede_net:
+            ipv4_address: 172.19.0.2
+    environment:
+      MYSQL_ROOT_PASSWORD: millipede123
+      MYSQL_DATABASE: millipede
+      MYSQL_USER: millipede
+      MYSQL_PASSWORD: millipede123
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql/data:/var/lib/mysql
 
   php-fpm:
     build:
       context: ../
       dockerfile: docker/php-fpm/Dockerfile
-    container_name: phalcon-php-fpm
+    container_name: millipede-php-fpm
     networks:
-      phalcon_net:
+      millipede_net:
         ipv4_address: 172.19.0.3
     working_dir: /var/www/millipede
+    privileged: true
     volumes:
-      - ./php-fpm/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf
-      - ./php-fpm/ssmtp/php-mail.conf:/usr/local/etc/php/conf.d/mail.ini
-      - ../:/var/www/millipede
-      - /www/millipede/docker/
-#    links:
-#      - db
+##      - ./php-fpm/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf
+##      - ./php-fpm/ssmtp/php-mail.conf:/usr/local/etc/php/conf.d/mail.ini
+      - ./php-fpm/configuration.ini:/usr/local/etc/php/conf.d/configuration.ini
+      - ./php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ../app/symfony/src:/var/www/millipede/src
+      - ../app/symfony/public:/var/www/millipede/public
+      - ../app/symfony/config:/var/www/millipede/config
+      - ../app/symfony/bin:/var/www/millipede/bin
+      - ../app/symfony/templates:/var/www/millipede/templates
+      - ../app/symfony/tests:/var/www/millipede/tests
+      - ../app/symfony/translations:/var/www/millipede/translations
+      - ../app/symfony/var:/var/www/millipede/var
+    links:
+      - db
 
 
   web:
     build:
       context: ../
       dockerfile: docker/nginx/Dockerfile
-    container_name: phalcon-webserver
+    container_name: millipede-webserver
     networks:
-      phalcon_net:
+      millipede_net:
         ipv4_address: 172.19.0.4
+    working_dir: /var/www/millipede/public
     ports:
       - "8080:80"
     volumes:
-      - ./nginx/conf/millipede.conf:/etc/nginx/conf.d/millipede.conf
-      - ../:/var/www/millipede
-      - /www/millipede/docker/
+      - ./nginx/conf/symfony.conf:/etc/nginx/conf.d/symfony.conf
+      - ../app/symfony/public:/var/www/millipede/public
+      - ../app/symfony/src:/var/www/millipede/src
+#      - /www/millipede/docker/
     links:
       - php-fpm
 
-  phalcon:
-    build:
-      context: ../
-      dockerfile: docker/phalcon/Dockerfile
-    container_name: phalcon-framework
-    networks:
-          phalcon_net:
-            ipv4_address: 172.19.0.5
-    working_dir: /var/www/millipede
-    volumes:
-      - ../:/var/www/millipede
-      - /www/millipede/docker/
-    links:
-      - php-fpm
-      - web
+#  phalcon:
+#    build:
+#      context: ../
+#      dockerfile: docker/phalcon/Dockerfile
+#    container_name: phalcon-framework
+#    networks:
+#      millipede_net:
+#        ipv4_address: 172.19.0.5
+#    working_dir: /var/www/millipede
+#    volumes:
+#      - ../:/var/www/millipede
+#      - /www/millipede/docker/
+#    links:
+#      - php-fpm
+#      - web
+
+#  symfony:
+#    build: php-fpm
+#    container_name: symfony-framework
+#    networks:
+#      millipede_net:
+#        ipv4_address: 172.19.0.6
+#    working_dir: /var/www/millipede
+#    volumes:
+#      - ../app/symfony:/var/www/millipede
+#      - /www/millipede/docker/
+#    links:
+#      - php-fpm
+#      - web
