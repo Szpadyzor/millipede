@@ -1,0 +1,77 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: 'en'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: false       # Allows optimizing the container by removing unused services; this also means
+                            # fetching services directly from the container via $container->get() won't work.
+                            # The best practice is to be explicit about your dependencies anyway.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    App\Api\:
+        resource: '../src/Api'
+        tags: ['api.millipede']
+
+    App\Form\:
+        resource: '../src/Form'
+        tags: ['form.millipede']
+
+    App\Form\EventListener\:
+        resource: '../src/Form/EventListener'
+        tags: ['eventListener.millipede']
+
+    app.entity.millipede:
+        class: App\Entity\Millipede;
+
+    app.entity.developer:
+        class: App\Entity\Developer;
+
+    App\Repository\DeveloperRepository: '@app.repository.developer_repository'
+
+    app.repository.developer_repository:
+        class: App\Repository\DeveloperRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - App\Entity\Developer
+
+    app.repository.millipede:
+        class: App\Repository\MillipedeRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+        arguments:
+            - App\Entity\Millipede
+
+
+    App\Entity\Millipede: '@app.entity.millipede'
+    App\Entity\Developer: '@app.entity.developer'
+
+
+
+    App\Repository\MillipedeRepository: '@app.repository.millipede'
+
+    gedmo.listener.timestampable:
+        class: Gedmo\Timestampable\TimestampableListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]

@@ -1,0 +1,22 @@
+/.idea
+/vendor
+/docker/.idea
+/docker/mysql/data
+
+
+###> symfony/framework-bundle ###
+app/symfony/.env.local
+app/symfony/.env.*.local
+app/symfony/public/bundles/
+app/symfony/var/
+app/symfony/vendor/
+###< symfony/framework-bundle ###
+
+###> symfony/phpunit-bridge ###
+app/symfony/.phpunit
+app/symfony/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+###> symfony/web-server-bundle ###
+app/symfony/.web-server-pid
+###< symfony/web-server-bundle ###

@@ -1,0 +1,24 @@
+{{ include('header.html.twig') }}
+
+{% for label, flashes in app.session.flashbag.all %}
+    {% for flash in flashes %}
+        <div class="alert alert-{{ label }}">
+            {{ flash }}
+        </div>
+    {% endfor %}
+{% endfor %}
+<div class="row">
+    <div>
+        {{ include('current_developers.html.twig') }}
+        <div class="well">
+            <h3>Amount of Developers</h3>
+            <p>Please enter developers data</p>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+</div>
+
+{{ include('footer.html.twig') }}
