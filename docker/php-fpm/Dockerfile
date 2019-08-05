@@ -1,8 +1,7 @@
 FROM php:7.2-fpm
+MAINTAINER Maciej Trybuła <maciej.trybula@gmail.com>
 
-RUN apt-get update
-
-RUN apt-get install -y zlib1g-dev libpq-dev git libicu-dev libxml2-dev \
+RUN apt-get update && apt-get install -y zlib1g-dev libpq-dev git libicu-dev libxml2-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
     && docker-php-ext-install zip xml \
@@ -35,5 +34,7 @@ COPY docker/php-fpm/conf/millipede.conf /usr/local/etc/php-fpm.d/
 #ADD .composer /home/millipede/.composer
 
 RUN chown -R millipede:millipede /usr/local/etc/php/conf.d /sock /var/www/millipede /var/log/php
+
+USER millipede:millipede
 
 RUN bin/console doctrine:schema:create

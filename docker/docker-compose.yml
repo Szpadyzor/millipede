@@ -31,6 +31,8 @@ services:
       context: ../
       dockerfile: docker/php-fpm/Dockerfile
     container_name: millipede-php-fpm
+    depends_on:
+      - db
     networks:
       millipede_net:
         ipv4_address: 172.19.0.3
@@ -41,23 +43,14 @@ services:
 ##      - ./php-fpm/ssmtp/php-mail.conf:/usr/local/etc/php/conf.d/mail.ini
       - ./php-fpm/configuration.ini:/usr/local/etc/php/conf.d/configuration.ini
       - ./php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-      - ../app/symfony/src:/var/www/millipede/src
-      - ../app/symfony/public:/var/www/millipede/public
-      - ../app/symfony/config:/var/www/millipede/config
-      - ../app/symfony/bin:/var/www/millipede/bin
-      - ../app/symfony/templates:/var/www/millipede/templates
-      - ../app/symfony/tests:/var/www/millipede/tests
-      - ../app/symfony/translations:/var/www/millipede/translations
-      - ../app/symfony/var:/var/www/millipede/var
-    links:
-      - db
-
-
+      - ../app/symfony:/var/www/millipede
   web:
     build:
       context: ../
       dockerfile: docker/nginx/Dockerfile
     container_name: millipede-webserver
+    depends_on:
+      - php-fpm
     networks:
       millipede_net:
         ipv4_address: 172.19.0.4
@@ -66,38 +59,4 @@ services:
       - "8080:80"
     volumes:
       - ./nginx/conf/symfony.conf:/etc/nginx/conf.d/symfony.conf
-      - ../app/symfony/public:/var/www/millipede/public
-      - ../app/symfony/src:/var/www/millipede/src
-#      - /www/millipede/docker/
-    links:
-      - php-fpm
-
-#  phalcon:
-#    build:
-#      context: ../
-#      dockerfile: docker/phalcon/Dockerfile
-#    container_name: phalcon-framework
-#    networks:
-#      millipede_net:
-#        ipv4_address: 172.19.0.5
-#    working_dir: /var/www/millipede
-#    volumes:
-#      - ../:/var/www/millipede
-#      - /www/millipede/docker/
-#    links:
-#      - php-fpm
-#      - web
-
-#  symfony:
-#    build: php-fpm
-#    container_name: symfony-framework
-#    networks:
-#      millipede_net:
-#        ipv4_address: 172.19.0.6
-#    working_dir: /var/www/millipede
-#    volumes:
-#      - ../app/symfony:/var/www/millipede
-#      - /www/millipede/docker/
-#    links:
-#      - php-fpm
-#      - web
+      - ../app/symfony:/var/www/millipede
