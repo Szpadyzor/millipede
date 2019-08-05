@@ -121,7 +121,7 @@ class RandomController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $developers = $this->millipede->getDevelopers();
 
-            foreach ($developers as $developer) {
+            foreach ($developers as $tempKey => $developer) {
                 $developerRepository = $this->getDoctrine()->getRepository(Developer::class);
                 $existedDeveloper = $developerRepository->findOneBy([Developer::EMAIL => $developer->getEmail()]);
 
@@ -132,13 +132,13 @@ class RandomController extends AbstractController
                     $dev->setProject($developer->getProject());
                     $dev->setFunction($developer->getFunction());
                     $dev->setEmail($developer->getEmail());
-
                     $entityManager->persist($dev);
+                    $this->millipede->getDevelopers()->set($tempKey, $dev);
                     $entityManager->flush();
                 }
             }
 
-            $this->createMillipede($session);
+            return $this->createMillipede($session);
         }
 
         return $this->render(

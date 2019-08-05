@@ -50,7 +50,6 @@ services:
       - ../app/symfony/templates:/var/www/millipede/templates
       - ../app/symfony/tests:/var/www/millipede/tests
       - ../app/symfony/translations:/var/www/millipede/translations
-      - ../app/symfony/var:/var/www/millipede/var
       - ../app/symfony/composer.json:/var/www/millipede/composer.json
       - ../app/symfony/composer.lock:/var/www/millipede/composer.lock
       - ../app/symfony/install.sh:/var/www/millipede/install.sh
@@ -80,7 +79,6 @@ services:
       - ../app/symfony/templates:/var/www/millipede/templates
       - ../app/symfony/tests:/var/www/millipede/tests
       - ../app/symfony/translations:/var/www/millipede/translations
-      - ../app/symfony/var:/var/www/millipede/var
       - ../app/symfony/composer.json:/var/www/millipede/composer.json
       - ../app/symfony/composer.lock:/var/www/millipede/composer.lock
       - ../app/symfony/install.sh:/var/www/millipede/install.sh
