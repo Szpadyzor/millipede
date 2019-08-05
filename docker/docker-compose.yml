@@ -70,6 +70,7 @@ services:
       - "8080:80"
     volumes:
       - ./nginx/conf/symfony.conf:/etc/nginx/conf.d/symfony.conf
+      - ./nginx/conf/.htpasswd:/var/www/millipede/.htpasswd
       - ./php-fpm/configuration.ini:/usr/local/etc/php/conf.d/configuration.ini
       - ./php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ../app/symfony/src:/var/www/millipede/src
